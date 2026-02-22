@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gallery | Auraverse</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* --- VARIABLES --- */
+:root {
+  --p: #5d308c; /* Purple */
+  --b: #306fb6; /* Blue */
+  --w: #ffffff;
+  --lg: #a6a6a6;
+  --dg: #545454;
+  --k: #000000;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; scroll-behavior: smooth; }
+h1, h2, h3, .nav-logo { font-family: "Comfortaa", sans-serif; letter-spacing: 1px; }
+body { background-color: #000000; color: var(--w); text-shadow: 0 0 6px rgba(255,255,255,0.05); overflow-x: hidden; }
+
+/* --- BACKGROUND FX --- */
+.bg-layer { position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at 15% 25%, #5d308c73, transparent 50%), radial-gradient(circle at 85% 75%, #306fb673, transparent 50%), radial-gradient(circle at 50% 50%, #000000, #080808 100%); }
+canvas#fx { position: fixed; inset: 0; z-index: -1; opacity: 0.4; pointer-events: none; }
+.grid { position: fixed; inset: 0; background: linear-gradient(rgba(48, 111, 182, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(93, 48, 140, 0.15) 1px, transparent 1px); background-size: 40px 40px; transform: perspective(500px) rotateX(60deg) translateY(0) scale(3); transform-origin: center top; opacity: 0.25; z-index: -1; pointer-events: none; }
+
+/* --- NAV --- */
+nav { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1100px; height: 70px; padding: 0 30px 0 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 15px; z-index: 1000; }
+.nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer; }
+.nav-logo-img { height: 45px; width: 45px; object-fit: contain; }
+.nav-brand-text { font-family: "Comfortaa", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--w); letter-spacing: -1px; padding-bottom: 2px; }
+.nav-links { display: flex; gap: 35px; align-items: center; }
+.nav-links a { text-decoration: none; color: #e0e0e0; font-size: 1.2rem; font-weight: 500; letter-spacing: 0.5px; transition: all 0.3s ease; font-family: "Comfortaa", sans-serif; text-transform: capitalize; cursor: pointer; }
+.nav-links a:hover { color: var(--w); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); transform: translateY(-1px); }
+
+/* Hamburger */
+.hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; padding: 5px; z-index: 1001; }
+.hamburger span { width: 25px; height: 2px; background-color: var(--w); border-radius: 2px; transition: all 0.3s ease; }
+.hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* Mobile Menu */
+.mobile-menu { position: fixed; top: 110px; left: 50%; transform: translateX(-50%) translateY(-20px); width: 90%; max-width: 400px; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 25px; opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 999; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.mobile-menu.active { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.mobile-menu a { text-decoration: none; color: var(--lg); font-family: "Orbitron", sans-serif; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; cursor: pointer; }
+.mobile-menu a:hover { color: var(--w); text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); transform: scale(1.1); }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+}
+
+/* --- GALLERY STYLES --- */
+.page-header { padding-top: 150px; text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 3rem; margin-bottom: 10px; background: linear-gradient(135deg, var(--b) 0%, var(--p) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; }
+.page-header p { color: var(--lg); font-size: 1.1rem; }
+
+.gallery-container { max-width: 1400px; margin: 0 auto; padding: 0 5% 100px; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.gallery-item { position: relative; border-radius: 15px; overflow: hidden; cursor: pointer; height: 250px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+.gallery-item:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-color: var(--b); }
+.gallery-item:hover img { transform: scale(1.1); }
+.gallery-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); opacity: 0; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 20px; }
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+.gallery-overlay h3 { font-size: 1.2rem; color: var(--w); margin-bottom: 5px; transform: translateY(20px); transition: 0.4s; }
+.gallery-item:hover .gallery-overlay h3 { transform: translateY(0); }
+.gallery-overlay span { color: var(--w); font-family: "Orbitron", sans-serif; letter-spacing: 2px; border: 1px solid var(--w); padding: 8px 20px; border-radius: 20px; backdrop-filter: blur(5px); }
+
+/* Back Button */
+.back-btn { background: transparent; border: 1px solid var(--w); color: var(--w); padding: 10px 20px; border-radius: 30px; cursor: pointer; margin-bottom: 30px; font-family: "Comfortaa", sans-serif; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; font-size: 1rem; }
+.back-btn:hover { background: var(--w); color: var(--k); }
+.hidden { display: none !important; }
+
+/* Modal */
+.image-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); display: flex; justify-content: center; align-items: center; z-index: 5000; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(10px); }
+.image-modal.active { opacity: 1; visibility: visible; }
+.image-modal-content { position: relative; max-width: 90vw; max-height: 90vh; }
+.image-modal-content img { max-width: 100%; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); }
+.close-modal { position: absolute; top: -40px; right: 0; color: white; font-size: 30px; cursor: pointer; transition: 0.3s; }
+.close-modal:hover { color: var(--p); }
+
+footer { text-align: center; padding: 30px; font-size: 0.8rem; color: var(--lg); border-top: 1px solid rgba(255,255,255,0.05); }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<canvas id="fx"></canvas>
+<div class="grid"></div>
+
+<nav>
+  <div class="nav-logo" onclick="window.location.href='index.html'">
+    <img src="logo.png" alt="Auraverse" class="nav-logo-img">
+    <span class="nav-brand-text">auraverse</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html#services">Services</a>
+    <a href="index.html#projects">Projects</a>
+    <a href="gallery.html" style="color: var(--w); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);">Gallery</a>
+    <a href="index.html#clients">Clients</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+  <div class="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html#services" onclick="toggleMobileMenu()">Services</a>
+  <a href="index.html#projects" onclick="toggleMobileMenu()">Projects</a>
+  <a href="gallery.html" onclick="toggleMobileMenu()" style="color: var(--w);">Gallery</a>
+  <a href="index.html#clients" onclick="toggleMobileMenu()">Clients</a>
+  <a href="index.html#contact" onclick="toggleMobileMenu()">Contact</a>
+</div>
+
+<div class="page-header">
+  <h1>Training Sessions</h1>
+  <p>Empowering students and professionals through immersive VR workshops</p>
+</div>
+
+<div class="gallery-container">
+  <!-- Session List (Top Level) -->
+  <div id="session-list" class="gallery-grid"></div>
+
+  <!-- Individual Session View (Hidden initially) -->
+  <div id="session-view" class="hidden">
+    <button class="back-btn" onclick="closeSession()">&#8592; Back to Sessions</button>
+    <h2 id="session-title-text" style="margin-bottom: 20px; color: var(--p); font-size: 2rem;"></h2>
+    <div id="session-images" class="gallery-grid"></div>
+  </div>
+</div>
+
+<div id="image-modal" class="image-modal">
+  <div class="image-modal-content">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <img src="" id="modal-image-content">
+  </div>
+</div>
+
+<footer><p>© 2026 AURAVERSE</p></footer>
+
+<script>
+const c = document.getElementById("fx"); const x = c.getContext("2d"); let w,h; const dots=[];
+function resize(){ w=c.width=innerWidth; h=c.height=innerHeight; } resize(); addEventListener("resize",resize);
+for(let i=0;i<80;i++){ dots.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.5, s:Math.random()*0.5}); }
+function loop(){ x.clearRect(0,0,w,h); dots.forEach(d=>{ d.y-=d.s; if(d.y<0) d.y=h; x.fillStyle="rgba(100, 150, 255, 0.4)"; x.beginPath(); x.arc(d.x,d.y,d.r,0,Math.PI*2); x.fill(); }); requestAnimationFrame(loop); }
+loop();
+
+function toggleMobileMenu() {
+  document.getElementById("mobileMenu").classList.toggle("active");
+  document.querySelector(".hamburger").classList.toggle("open");
+}
+
+// --- GALLERY LOGIC ---
+const sessions = [
+  {
+    title: "Industrial Safety Workshop",
+    thumb: "SV (1).png",
+    images: ["SV (1).png", "SV (2).png", "SV (3).png"]
+  },
+  {
+    title: "Meta Campus Tour",
+    thumb: "MC (1).png",
+    images: ["MC (1).png", "MC (2).png", "MC (3).png", "MC (4).png", "MC (5).png"]
+  },
+  {
+    title: "Soul Link Demo",
+    thumb: "SL (1).png",
+    images: ["SL (1).png", "SL (2).png", "SL (3).png"]
+  },
+  {
+    title: "Workshop Highlights",
+    thumb: "Carousel1.png",
+    images: ["Carousel1.png", "Carousel2.png", "Carousel3.png"]
+  }
+];
+
+const sessionList = document.getElementById('session-list');
+const sessionView = document.getElementById('session-view');
+const sessionImages = document.getElementById('session-images');
+const sessionTitle = document.getElementById('session-title-text');
+
+// Render Session Cards
+sessions.forEach((session, index) => {
+  const card = document.createElement('div');
+  card.className = 'gallery-item';
+  card.innerHTML = `<img src="${session.thumb}" alt="${session.title}"><div class="gallery-overlay"><h3>${session.title}</h3><span>View</span></div>`;
+  card.onclick = () => openSession(index);
+  sessionList.appendChild(card);
+});
+
+function openSession(index) {
+  const session = sessions[index];
+  sessionList.classList.add('hidden');
+  sessionView.classList.remove('hidden');
+  sessionTitle.textContent = session.title;
+  sessionImages.innerHTML = session.images.map(img => 
+    `<div class="gallery-item" onclick="openModal('${img}')"><img src="${img}" alt="Image"><div class="gallery-overlay"><span>View Fullscreen</span></div></div>`
+  ).join('');
+}
+
+function closeSession() {
+  sessionView.classList.add('hidden');
+  sessionList.classList.remove('hidden');
+  sessionImages.innerHTML = ''; // Clear to save memory
+}
+
+const imageModal = document.getElementById('image-modal');
+const modalImg = document.getElementById('modal-image-content');
+function openModal(src) { modalImg.src = src; imageModal.classList.add('active'); }
+function closeModal() { imageModal.classList.remove('active'); }
+imageModal.addEventListener('click', (e) => { if (e.target === imageModal) closeModal(); });
+</script>
+</body>
+</html>

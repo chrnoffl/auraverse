@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="Detailsport" content="width=device-width, initial-scale=1.0"/>
+<title>Auraverse</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* --- VARIABLES --- */
+:root {
+  --p: #5d308c; /* Purple */
+  --b: #306fb6; /* Blue */
+  --w: #ffffff;
+  --lg: #a6a6a6;
+  --dg: #545454;
+  --k: #000000;
+}
+
+* { 
+  margin: 0; padding: 0; box-sizing: border-box; 
+  font-family: sans-serif; 
+  scroll-behavior: smooth; 
+}
+
+h1, h2, h3, .section-header, .nav-logo {
+  font-family: "Comfortaa", sans-serif;
+  letter-spacing: 1px;
+}
+
+body {
+  background-color: #000000;
+  color: var(--w);
+  text-shadow: 0 0 6px rgba(255,255,255,0.05);
+  overflow-x: hidden;
+}
+
+/* Hide hosting provider branding */
+img[alt="www.000webhost.com"], .disclaimer { display: none !important; }
+
+/* --- BACKGROUND FX --- */
+.bg-layer {
+  position: fixed; inset: 0; z-index: -2;
+  background: 
+    radial-gradient(circle at 15% 25%, #5d308c73, transparent 50%),
+    radial-gradient(circle at 85% 75%, #306fb673, transparent 50%),
+    radial-gradient(circle at 50% 50%, #000000, #080808 100%);
+}
+
+canvas#fx { position: fixed; inset: 0; z-index: -1; opacity: 0.4; pointer-events: none; }
+
+.grid {
+  position: fixed; inset: 0;
+  background:
+    linear-gradient(rgba(48, 111, 182, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(93, 48, 140, 0.15) 1px, transparent 1px);
+  background-size: 40px 40px; 
+  transform: perspective(500px) rotateX(60deg) translateY(0) scale(3);
+  transform-origin: center top; 
+  opacity: 0.25; z-index: -1; pointer-events: none;
+}
+
+/* --- FLOATING NAVBAR --- */
+nav {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1100px; /* Slightly wider to fit content comfortably */
+  height: 70px; /* Fixed height for the pill shape */
+  padding: 0 30px 0 20px;
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  /* Glassmorphism Background */
+  background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.02)
+    ); /* Darker semi-transparent base */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 15px; /* Full pill shape */
+  z-index: 1000;
+}
+
+/* Logo Container (Icon + Text) */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-logo-img {
+  height: 45px; /* Adjust based on your actual logo file */
+  width: 45px;
+  object-fit: contain;
+}
+
+.nav-brand-text {
+  font-family: "Comfortaa", sans-serif; /* Rounded font from your imports */
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--w);
+  letter-spacing: -1px; /* Tighter tracking for the logo look */
+  padding-bottom: 2px; /* Optical alignment */
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  gap: 35px; /* Spacing between links */
+  align-items: center;
+}
+
+.nav-links a, .nav-links .js-scroll-trigger {
+  text-decoration: none;
+  color: #e0e0e0; /* Slightly off-white for better read */
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  font-family: "Comfortaa", sans-serif; /* Tech look */
+  text-transform: capitalize; /* Matches "Services", "Gallery", etc. */
+  cursor: pointer;
+}
+
+.nav-links a:hover, .nav-links .js-scroll-trigger:hover {
+  color: var(--w);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+/* --- MOBILE MENU STYLES --- */
+
+/* Hamburger Icon (Hidden on Desktop) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 2px;
+  background-color: var(--w);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Mobile Dropdown Container */
+.mobile-menu {
+  position: fixed;
+  top: 110px; /* Spaced below the main nav pill */
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  width: 90%;
+  max-width: 400px;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  
+  opacity: 0;
+  pointer-events: none; /* Prevents clicking when hidden */
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  z-index: 999;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+}
+
+/* Active State (Visible) */
+.mobile-menu.active {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* Mobile Menu Links */
+.mobile-menu a, .mobile-menu .js-scroll-trigger {
+  text-decoration: none;
+  color: var(--lg);
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.mobile-menu a:hover, .mobile-menu .js-scroll-trigger:hover {
+  color: var(--w);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+/* --- ANIMATED HAMBURGER TO 'X' --- */
+.hamburger.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* --- MEDIA QUERIES --- */
+@media (max-width: 768px) {
+  .nav-links { display: none; } /* Hide Desktop Links */
+  .hamburger { display: flex; } /* Show Hamburger */
+}
+/* --- GRID LAYOUT (Used for both Services & Projects) --- */
+.solutions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sol-card {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.02)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 15px 40px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 40px;
+  border-radius: 10px; /* Slight radius looks cleaner */
+  position: relative;
+  overflow: hidden;
+  transition: 0.4s;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+/* Hover Border Effect */
+.sol-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 4px; height: 100%;
+  background: var(--dg);
+  transition: 0.4s;
+}
+
+.sol-card:hover {
+  background: rgba(255,255,255,0.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    0 20px 60px rgba(93,48,140,0.25);
+}
+
+/* Typography inside Card */
+.sol-card h2 { font-size: 1.8rem; margin-bottom: 15px; color: var(--w); }
+.sol-card p { color: var(--lg); line-height: 1.6; margin-bottom: 25px; }
+
+/* Link Style */
+.card-link {
+  color: var(--w);
+  text-decoration: none;
+  font-weight: bold;
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto; /* Pushes link to bottom */
+}
+.card-link:hover { gap: 15px; color: var(--b); }
+
+/* --- COLOR VARIANTS (Hover Colors) --- */
+/* Service 1: Blue Glow */
+.sol-card.service-train::before { background: var(--b); box-shadow: 0 0 20px var(--b); }
+
+/* Service 2: Purple Glow */
+.sol-card.service-corp::before { background: var(--p); box-shadow: 0 0 20px var(--p); }
+
+/* Service 3: White Glow */
+.sol-card.service-cert::before { background: var(--w); box-shadow: 0 0 20px var(--w); }
+/* --- HERO --- */
+section.hero {
+  position: relative;
+  min-height: 90vh; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; text-align: center; padding-top: 100px;
+}
+
+.brand {
+  font-size: clamp(4rem, 10vw, 9rem);
+  font-weight: 900;
+  font-family: "Comfortaa", sans-serif;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, var(--b) 0%, var(--p) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 30px rgba(48, 111, 182, 0.3));
+}
+
+.tagline {
+  font-size: 1.2rem; color: var(--lg); margin-top: 10px;
+  letter-spacing: 4px; text-transform: uppercase;
+}
+
+/* --- SCROLL INDICATOR --- */
+.scroll-indicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.scroll-indicator:hover { opacity: 1; }
+.scroll-indicator span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-bottom: 2px solid var(--w);
+  border-right: 2px solid var(--w);
+  transform: rotate(45deg);
+  margin: -6px;
+  animation: scroll-anim 2s infinite;
+}
+.scroll-indicator span:nth-child(2) { animation-delay: -0.2s; }
+.scroll-indicator span:nth-child(3) { animation-delay: -0.4s; }
+
+@keyframes scroll-anim {
+  0% { opacity: 0; transform: rotate(45deg) translate(-10px, -10px); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(45deg) translate(10px, 10px); }
+}
+
+/* --- COMMON SECTIONS --- */
+section { padding: 80px 5%; max-width: 1400px; margin: 0 auto; scroll-margin-top: 120px; }
+.section-header { text-shadow:
+    0 0 10px rgba(93,48,140,0.25),
+    0 0 25px rgba(48,111,182,0.15); margin-bottom: 50px; font-size: 2.2rem; font-weight: 300; text-align: center; }
+.section-header b { font-weight: 900; color: var(--p); }
+
+/* --- EXPANDING FLEX CARDS (The requested design) --- */
+.expanding-container {
+  display: flex; width: 100%; height: 500px; gap: 15px;
+}
+
+.card {
+  position: relative; height: 100%; flex: 1; 
+  border-radius: 30px; overflow: hidden; cursor: pointer;
+  transition: flex 0.7s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth Expansion */
+  border: 1px solid rgba(255,255,255,0.1); background: #0a0a0a;
+}
+
+.card-bg {
+  position: absolute; inset: 0; background-size: cover; background-position: center;
+  transition: transform 0.7s ease; filter: brightness(0.65) grayscale(0.25);
+}
+
+/* EXPANSION LOGIC */
+.card:hover { flex: 4; border-color: rgba(255,255,255,0.4); }
+.card:hover .card-bg { transform: scale(1.1); filter: brightness(1.05) grayscale(0); }
+
+/* CONTENT FADE IN/OUT */
+.card-content {
+  position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px;
+  background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0s, transform 0s; /* Instant hide when leaving */
+}
+.card:hover .card-content {
+  opacity: 1; transform: translateY(0);
+  transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s; /* Delayed show */
+}
+
+.card h2 { font-size: 2.2rem; margin-bottom: 10px; color: var(--w); }
+.card p { font-size: 1.1rem; color: #ddd; max-width: 500px; margin-bottom: 20px; }
+.btn-arrow { 
+  display: inline-block; padding: 10px 20px; border: 1px solid var(--w); 
+  border-radius: 50px; color: var(--w); text-decoration: none; font-size: 0.8rem; 
+  background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); cursor: pointer;
+}
+
+/* --- CLIENT LOGOS --- */
+.clients-grid {
+  display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; align-items: center;
+}
+.client-logo {
+  height: 80px; width: 180px;
+  background: rgba(255, 255, 255, 0.03); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
+  padding: 10px;
+}
+.client-logo img {
+  max-width: 100%; max-height: 100%;
+}
+.client-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.client-caption {
+  font-size: 0.85rem;
+  color: var(--lg);
+  font-family: "Comfortaa", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- ABOUT US --- */
+.about-container { display: flex; flex-direction: column; gap: 50px; }
+.about-intro { text-align: center; max-width: 800px; margin: 0 auto; }
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 30px; }
+.founder-card {
+  position: relative; height: 500px; border-radius: 20px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
+}
+.founder-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+.founder-overlay {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+  display: flex; flex-direction: column; justify-content: flex-end; padding: 30px;
+  opacity: 0; transform: translateY(20px); transition: 0.4s;
+}
+.founder-card:hover .founder-overlay { opacity: 1; transform: translateY(0); }
+
+/* --- CONTACT --- */
+.contact-wrapper {
+  background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px); border-radius: 20px; padding: 50px;
+  max-width: 800px; margin: 0 auto;
+}
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: var(--lg); }
+.form-control {
+  width: 100%; padding: 15px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--w);
+}
+.form-control:focus { outline: none; border-color: var(--p); background: rgba(93, 48, 140, 0.1); }
+.btn-submit {
+  width: 100%; padding: 15px; background: linear-gradient(90deg, var(--p), var(--b));
+  border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+.btn-submit:hover { opacity: 0.9; box-shadow: 0 0 20px rgba(93, 48, 140, 0.5); }
+
+/* --- SECTION LAYOUT --- */
+section#projects {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  height: 700px; /* Fixed height for the area */
+  margin: 0 auto;
+  overflow: hidden; /* CRITICAL: Prevents scrollbars */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- CAROUSEL CONTAINER --- */
+.carousel-2d {
+  position: relative;
+  width: 100%;
+  height: 500px; /* Height of the cards area */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- CARD BASE STYLES --- */
+.card-2d {
+  position: absolute;
+  width: 350px; /* Base width */
+  height: 450px; /* Base height */
+  background: #0a0a0a;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+  
+  /* Centered by default, JS moves them left/right */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.5); /* Start small and hidden */
+  
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  
+  /* Smooth transitions for moving between states */
+  transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* --- STATES (Applied by JS) --- */
+
+/* --- STATES --- */
+
+/* 1. CENTER ACTIVE (Widescreen) */
+.card-2d.c-active {
+  left: 50% !important;
+  width: 750px !important;
+  height: 450px !important;
+  opacity: 1;
+  z-index: 10;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1.05);
+  border-color: var(--b);
+  box-shadow: 0 20px 60px rgba(48, 111, 182, 0.25);
+  filter: blur(0);
+}
+
+/* 2. PREVIOUS (Visible Left) */
+.card-2d.c-prev {
+  left: 15% !important;
+  width: 350px !important;
+  height: 450px !important;
+  opacity: 0.5;
+  z-index: 5;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(0.85);
+  filter: blur(4px) brightness(0.7);
+}
+
+/* 3. NEXT (Visible Right) */
+.card-2d.c-next {
+  left: 85% !important;
+  width: 350px !important;
+  height: 450px !important;
+  opacity: 0.5;
+  z-index: 5;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(0.85);
+  filter: blur(4px) brightness(0.7);
+}
+
+/* 4. HIDDEN LEFT (Exit Point) */
+/* When a card leaves the 'Prev' spot, it goes here */
+.card-2d.c-hide-left {
+  left: -50% !important; /* Far off-screen left */
+  width: 350px !important;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.5);
+}
+
+/* 5. HIDDEN RIGHT (Entry Point) */
+/* When a card waits to become 'Next', it sits here */
+.card-2d.c-hide-right {
+  left: 150% !important; /* Far off-screen right */
+  width: 350px !important;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.5);
+}
+
+
+
+/* --- CARD INTERNALS (Content Fade) --- */
+.card-content {
+  position: absolute; bottom: 0; left: 0; width: 100%; padding: 120px 30px 30px;
+  background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.8) 50%, transparent 100%);
+  opacity: 0; transform: translateY(20px);
+  transition: 0.4s;
+}
+
+/* Only show text on ACTIVE card */
+.card-2d.c-active .card-content {
+  opacity: 1; transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+.card-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transition: 0.6s;
+  filter: brightness(0.6);
+}
+.card-2d.c-active .card-bg {
+  filter: brightness(1);
+}
+
+/* --- CONTROLS --- */
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex; gap: 20px;
+  z-index: 20;
+  width: 100%;
+  justify-content: space-between; /* Push buttons to the sides */
+  padding: 0 20px; /* Add some padding to the sides */
+  pointer-events: none;
+}
+
+.carousel-controls button {
+  background: hsla(0, 0%, 23%, 0.561);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 50px; /* Make them round */
+  height: 50px; /* Make them round */
+  border-radius: 50%; /* Circular shape */
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: 0.3s ease;
+  display: flex; justify-content: center; align-items: center; /* Center content */
+  pointer-events: auto;
+}
+/* --- SUBMISSION POPUP --- */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.379);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.popup-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup-content {
+  background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.02)
+    );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 40px;
+  border-radius: 15px;
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.popup-overlay.visible .popup-content {
+  transform: scale(1);
+}
+.popup-content h2 { font-family: "Comfortaa", sans-serif; color: var(--p); margin-bottom: 15px; }
+.popup-content p { color: var(--lg); margin-bottom: 30px; }
+.popup-content .btn-submit { width: auto; padding: 12px 40px; }
+/* --- MOBILE --- */
+
+@media (max-width: 768px) {
+  .card-2d.c-active { width: 300px !important; }
+  /* Hide side cards on mobile to keep it clean */
+  .card-2d.c-prev, .card-2d.c-next, 
+  .card-2d.c-hide-left, .card-2d.c-hide-right { 
+    opacity: 0; pointer-events: none; 
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    padding: 0 20px;
+    height: 60px;
+  }
+  .nav-brand-text { font-size: 1.2rem; }
+  .nav-links { display: none; } /* Keeps links hidden on mobile */
+  .expanding-container { flex-direction: column; height: auto; }
+  .card { height: 250px; flex: none; width: 100%; }
+  .card:hover { height: 350px; }
+  .team-grid { grid-template-columns: 1fr; }
+  .founder-card { height: 400px; }
+  .card-content { opacity: 1; transition: none; transform: translateY(0); }
+  .brand { font-size: 4rem; }
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  font-size: 0.8rem;
+  color: var(--lg);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<canvas id="fx"></canvas>
+<div class="grid"></div>
+
+<nav>
+  <div class="nav-logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <img src="logo.png" alt="Auraverse" class="nav-logo-img">
+    <span class="nav-brand-text">auraverse</span>
+  </div>
+
+  <div class="nav-links">
+    <span class="js-scroll-trigger" onclick="scrollToSection('services')">Services</span>
+    <span class="js-scroll-trigger" onclick="scrollToSection('projects')">Projects</span>
+    <!--<a href="gallery.html">Gallery</a>-->
+    <span class="js-scroll-trigger" onclick="scrollToSection('clients')">Clients</span>
+    <span class="js-scroll-trigger" onclick="scrollToSection('contact')">Contact</span>
+  </div>
+
+  <div class="hamburger" onclick="toggleMobileMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <span class="js-scroll-trigger" onclick="scrollToSection('services'); toggleMobileMenu();">Services</span>
+  <span class="js-scroll-trigger" onclick="scrollToSection('projects'); toggleMobileMenu();">Projects</span>
+  <!--<a href="gallery.html" onclick="toggleMobileMenu()">Gallery</a>-->
+  <span class="js-scroll-trigger" onclick="scrollToSection('clients'); toggleMobileMenu();">Clients</span>
+  <span class="js-scroll-trigger" onclick="scrollToSection('contact'); toggleMobileMenu();">Contact</span>
+</div>
+
+<section class="hero">
+  <div class="tagline">Welcome to the future</div>
+  <div class="brand">auraverse</div>
+  <h1>Step Beyond Reality</h1>
+  <p style="color:var(--lg); margin-top:20px; max-width: 600px;">
+    We build immersive Virtual Reality ecosystems for education, architecture, and human connection.
+  </p>
+
+  <div class="scroll-indicator" onclick="document.getElementById('services').scrollIntoView({behavior: 'smooth'})">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</section>
+<br>
+
+<section id="services">
+  <div class="section-header">
+    <h3 style="color: var(--p); letter-spacing: 2px; margin-bottom: 10px;">WHAT WE OFFER</h3>
+    <h1 style="font-size: 2.5rem; margin-bottom: 50px;">Our Services</h1>
+  </div>
+
+  <div class="solutions-grid">
+    
+    <div class="sol-card service-train">
+      <h2>VR Training</h2>
+      <p>Comprehensive curriculum and hardware setup for colleges. We integrate immersive technology directly into your syllabus.</p>
+    </div>
+
+    <div class="sol-card service-corp">
+      <h2>Solutions</h2>
+      <p>Custom-built VR/AR applications for enterprise. From industrial sims to marketing experiences, we build what you imagine.</p>
+    </div>
+
+    <div class="sol-card service-cert">
+      <h2>Certifications</h2>
+      <p>Industry-recognized certification programs. Empowering students with the skills to build the metaverse.</p>
+    </div>
+
+  </div>
+</section>
+
+
+<section id="projects">
+  <div class="section-header">Our <b>Projects</b></div>
+
+  <div class="carousel-2d">
+    
+    <div class="card-2d">
+      <div class="card-bg" style="background-image: url('Carousel1.png');"></div>
+      <div class="card-content">
+        <h2>Safety VR</h2>
+        <p>Industrial grade simulation for engineering colleges.</p>
+        <br>
+        <span class="btn-arrow" onclick="window.location.href='details_Safety.html'">Details</span>
+      </div>
+    </div>
+
+    <div class="card-2d">
+      <div class="card-bg" style="background-image: url('Carousel2.png');"></div>
+      <div class="card-content">
+        <h2>Meta Arch</h2>
+        <p>Walk through blueprints before they are built.</p>
+        <br>
+        <span class="btn-arrow" onclick="window.location.href='details_MetaArch.html'">Details</span>
+      </div>
+    </div>
+
+    <div class="card-2d">
+      <div class="card-bg" style="background-image: url('Carousel3.png');"></div>
+      <div class="card-content">
+        <h2>Soul Link</h2>
+        <p>Connect with your the souls from heaven</p>
+        <br>
+        <span class="btn-arrow" onclick="window.location.href='details_SoulLink.html'">Details</span>
+      </div>
+    </div>
+
+    <div class="carousel-controls">
+      <button class="nav-btn prev-btn" onclick="moveCarousel(-1)">&#10094;</button>
+      <button class="nav-btn next-btn" onclick="moveCarousel(1)">&#10095;</button>
+    </div>
+
+  </div>
+</section>
+
+<section id="clients">
+  <div class="section-header">Our <b>Clients</b></div>
+  <div class="clients-grid">
+    <div class="client-item">
+      <div class="client-logo"><img src="rec.png" alt="Rajalakshmi Engineering College"></div>
+      <p class="client-caption">Pilot Session</p>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about-container">
+    <div class="about-intro">
+      <div class="section-header">Built by <b>Creators</b></div>
+      <p style="color: var(--lg); line-height: 1.8;">
+        Auraverse is a team of three visionary developers and designers committed to bridging the gap between physical and digital reality. 
+      </p>
+    </div>
+    <div class="team-grid">
+      <div class="founder-card">
+        <img src="BOD2.png" alt="Founder 1" class="founder-img">
+        <div class="founder-overlay"><div class="founder-info"><h3>Adhithya</h3><span>Co-Founder<br>Chief Operations Officer</span></div></div>
+      </div>
+      <div class="founder-card">
+        <img src="BOD1.png" alt="Founder 2" class="founder-img">
+        <div class="founder-overlay"><div class="founder-info"><h3>Charan Raj</h3><span>Founder<br>Chief Executive Officer</span></div></div>
+      </div>
+      <div class="founder-card">
+        <img src="BOD3.png" alt="Founder 3" class="founder-img">
+        <div class="founder-overlay"><div class="founder-info"><h3>Surya</h3><span>Managing Director</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-header">Get in <b>Touch</b></div>
+  <div class="contact-wrapper">
+    <form id="contactForm" action="https://formsubmit.co/auraverse.co.in@gmail.com" method="POST">
+      <div class="form-group"><label>Your Name</label><input type="text" name="name" class="form-control" placeholder="Enter your name" required></div>
+      <div class="form-group"><label>Email Address</label><input type="email" name="email" class="form-control" placeholder="name@company.com" required></div>
+      <div class="form-group"><label>Message</label><textarea name="message" class="form-control" rows="4" placeholder="How can we help you?" required></textarea></div>
+
+      <!-- FormSubmit.co settings -->
+      <input type="hidden" name="_subject" value="New Contact Form Submission from Auraverse Website">
+      <input type="hidden" name="_captcha" value="false">
+
+      <br><button type="submit" class="btn-submit">Send Message</button>
+    </form>
+    <p style="text-align:center; margin-top:20px; font-size:0.9rem; color:var(--lg);">Or email us at <b style="color:var(--w)">auraverse.co.in@gmail.com</b></p>
+  </div>
+</section>
+
+<!-- Submission Popup -->
+<div id="submission-popup" class="popup-overlay">
+  <div class="popup-content">
+    <h2>Thank You!</h2>
+    <p>Your message has been sent successfully. We'll get back to you shortly.</p>
+    <button id="close-popup-btn" class="btn-submit">Close</button>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 AURAVERSE</p>
+</footer>
+
+<script>
+const c = document.getElementById("fx");
+const x = c.getContext("2d");
+let w,h;
+const dots=[];
+function resize(){ w=c.width=innerWidth; h=c.height=innerHeight; }
+resize();
+addEventListener("resize",resize);
+for(let i=0;i<80;i++){ dots.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.5, s:Math.random()*0.5}); }
+function loop(){
+  x.clearRect(0,0,w,h);
+  dots.forEach(d=>{
+    d.y-=d.s; if(d.y<0) d.y=h;
+    x.fillStyle="rgba(100, 150, 255, 0.4)"; x.beginPath(); x.arc(d.x,d.y,d.r,0,Math.PI*2); x.fill();
+  });
+  requestAnimationFrame(loop);
+}
+loop();
+
+function scrollToSection(sectionId) {
+  document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+}
+
+// --- 2D FLOW CAROUSEL LOGIC ---
+const cards2D = document.querySelectorAll(".card-2d");
+let activeIndex = 0;
+const totalCards2D = cards2D.length;
+
+function updateCarousel2D() {
+  cards2D.forEach((card, i) => {
+    // 1. Calculate Circular Distance
+    // This tells us how far a card is from the Active card (-2, -1, 0, 1, 2, etc.)
+    // We adjust it so it finds the shortest path around the circle.
+    let distance = (i - activeIndex) % totalCards2D;
+    
+    // Adjust for negative wrap-around (e.g. -1 becomes +Total-1)
+    if (distance > totalCards2D / 2) distance -= totalCards2D;
+    if (distance < -totalCards2D / 2) distance += totalCards2D;
+
+    // 2. Clear all classes
+    card.classList.remove("c-active", "c-prev", "c-next", "c-hide-left", "c-hide-right");
+
+    // 3. Assign Class based on Distance
+    if (distance === 0) {
+      card.classList.add("c-active"); // Center
+    } else if (distance === -1) {
+      card.classList.add("c-prev");   // Left Visible
+    } else if (distance === 1) {
+      card.classList.add("c-next");   // Right Visible
+    } else if (distance < -1) {
+      card.classList.add("c-hide-left"); // Off-screen Left
+    } else {
+      card.classList.add("c-hide-right"); // Off-screen Right
+    }
+  });
+}
+
+// 4. Button Handler
+function moveCarousel(direction) {
+  // Update Index
+  if (direction === 1) {
+    activeIndex = (activeIndex + 1) % totalCards2D;
+  } else {
+    activeIndex = (activeIndex - 1 + totalCards2D) % totalCards2D;
+  }
+  updateCarousel2D();
+}
+
+// Initialize
+updateCarousel2D();
+function toggleMobileMenu() {
+  const menu = document.getElementById("mobileMenu");
+  const hamburger = document.querySelector(".hamburger");
+  
+  // Toggle the active class on the menu (show/hide)
+  menu.classList.toggle("active");
+  
+  // Toggle the open class on the hamburger (animate bars)
+  hamburger.classList.toggle("open");
+}
+
+// Close menu if clicking outside of it (Optional User Experience improvement)
+document.addEventListener('click', function(event) {
+  const menu = document.getElementById("mobileMenu");
+  const hamburger = document.querySelector(".hamburger");
+  const isClickInside = menu.contains(event.target) || hamburger.contains(event.target);
+
+  if (!isClickInside && menu.classList.contains("active")) {
+    menu.classList.remove("active");
+    hamburger.classList.remove("open");
+  }
+});
+
+// --- CONTACT FORM AJAX SUBMISSION ---
+const contactForm = document.getElementById('contactForm');
+const popup = document.getElementById('submission-popup');
+const closePopupBtn = document.getElementById('close-popup-btn');
+const submitBtn = contactForm.querySelector('.btn-submit');
+
+contactForm.addEventListener('submit', function (e) {
+    e.preventDefault(); // Prevent default redirect
+
+    const formData = new FormData(contactForm);
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+
+    fetch(contactForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        // The email is being sent, so the request is successful.
+        // The issue is that formsubmit.co might not return valid JSON, causing `response.json()` to fail.
+        // We can simply check for a successful HTTP status (`response.ok`) to confirm success.
+        if (response.ok) {
+            contactForm.reset(); // Clear the form
+            popup.classList.add('visible'); // Show the popup
+        } else {
+            // If the server response is not ok, we throw an error to be caught by the .catch block.
+            throw new Error('Network response was not ok.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Sorry, there was an error sending your message. Please try again.');
+    })
+    .finally(() => {
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Close popup functionality
+closePopupBtn.addEventListener('click', () => popup.classList.remove('visible'));
+popup.addEventListener('click', (e) => { if (e.target === popup) popup.classList.remove('visible'); });
+</script>
+
+</body>
+</html>
