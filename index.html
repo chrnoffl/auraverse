@@ -303,7 +303,7 @@ nav {
 section.hero {
   position: relative;
   min-height: 90vh; display: flex; flex-direction: column;
-  justify-content: center; align-items: center; text-align: center; padding-top: 120px;
+  justify-content: center; align-items: center; text-align: center; padding-top: 90px;
 }
 
 .brand {
@@ -432,7 +432,7 @@ section { padding: 80px 5%; max-width: 1400px; margin: 0 auto; scroll-margin-top
 }
 
 /* --- ABOUT US --- */
-.about-container { display: flex; flex-direction: column; gap: 50px; }
+.about-container { display: flex; flex-direction: column;}
 .about-intro { text-align: center; max-width: 800px; margin: 0 auto; }
 .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 30px; }
 .founder-card {
@@ -916,7 +916,16 @@ function loop(){
 loop();
 
 function scrollToSection(sectionId) {
-  document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+  const element = document.getElementById(sectionId);
+  const offset = 120; // increase this number to scroll further down
+
+  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+  const offsetPosition = elementPosition - offset;
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: "smooth"
+  });
 }
 
 // --- 2D FLOW CAROUSEL LOGIC ---
@@ -926,6 +935,7 @@ const totalCards2D = cards2D.length;
 
 function updateCarousel2D() {
   cards2D.forEach((card, i) => {
+    
     // 1. Calculate Circular Distance
     // This tells us how far a card is from the Active card (-2, -1, 0, 1, 2, etc.)
     // We adjust it so it finds the shortest path around the circle.
@@ -1035,13 +1045,9 @@ contactForm.addEventListener('submit', function (e) {
 // Close popup functionality
 closePopupBtn.addEventListener('click', () => popup.classList.remove('visible'));
 popup.addEventListener('click', (e) => { if (e.target === popup) popup.classList.remove('visible'); });
+
 </script>
-
+  
 </body>
-
+  
 </html>
-
-
-
-
-
